@@ -12,6 +12,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -19,6 +20,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.unit.dp
 import androidx.core.app.ActivityCompat
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.mehmetbaloglu.locationapp.ui.theme.LocationAppTheme
@@ -56,12 +58,16 @@ fun locationDisplay(
     viewModel: LocationViewModel,
     context: Context
 ) {
+    val location = viewModel.location.value
 
     val requestPermissionLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestMultiplePermissions(),
         onResult = { permissions ->
-            if (permissions[Manifest.permission.ACCESS_FINE_LOCATION] == true && permissions[Manifest.permission.ACCESS_COARSE_LOCATION] == true) {
+            if (permissions[Manifest.permission.ACCESS_FINE_LOCATION] == true
+                && permissions[Manifest.permission.ACCESS_COARSE_LOCATION] == true
+            ) {
                 //we have access to location
+                locationUtils.requestLocationUpdates(viewModel = viewModel)
             } else {
                 val rationaleRequire = ActivityCompat.shouldShowRequestPermissionRationale(
                     context as MainActivity,
@@ -92,11 +98,16 @@ fun locationDisplay(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-        Text(text = "Location Not Available !")
+        if (location != null) {
+            Text(text = "Latitude: ${location.latitude}, Longitude: ${location.longitude}")
+        } else {
+            Text(text = "Location not available")
+        }
 
         Button(onClick = {
             if (locationUtils.hasLocationPermission(context)) {
                 //permission already granted
+                locationUtils.requestLocationUpdates(viewModel = viewModel)
 
             } else {
                 //request location permission
@@ -107,9 +118,7 @@ fun locationDisplay(
                     )
                 )
             }
-        }) {
-            Text(text = "Get Location")
-        }
+        }, Modifier.padding(16.dp)) { Text(text = "Get Location") }
 
     }
 
