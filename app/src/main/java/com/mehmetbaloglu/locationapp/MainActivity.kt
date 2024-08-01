@@ -12,6 +12,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
 import androidx.compose.material3.Surface
@@ -47,7 +48,7 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun LocationApp(viewModel: LocationViewModel) {
     val context = LocalContext.current
-    val locationUtils = LocationUtils(context) //izinler varsa true yoksa false döndürür
+    val locationUtils = LocationUtils(context)
     locationDisplay(locationUtils, viewModel, context = context)
 }
 
@@ -59,6 +60,7 @@ fun locationDisplay(
     context: Context
 ) {
     val location = viewModel.location.value
+    val address = location?.let { locationUtils.reverseGeocodeLocation(it) }
 
     val requestPermissionLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestMultiplePermissions(),
@@ -99,7 +101,12 @@ fun locationDisplay(
         verticalArrangement = Arrangement.Center
     ) {
         if (location != null) {
-            Text(text = "Latitude: ${location.latitude}, Longitude: ${location.longitude}")
+            Text(
+                text = "Latitude: ${location.latitude}," +
+                        "Longitude: ${location.longitude} " +
+                        "\nAddress: $address",
+                modifier = Modifier.padding(16.dp).fillMaxWidth()
+            )
         } else {
             Text(text = "Location not available")
         }

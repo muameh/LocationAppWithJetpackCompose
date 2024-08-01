@@ -59,6 +59,7 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
+    implementation(libs.play.services.maps)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -72,4 +73,9 @@ dependencies {
 
     //google play location services
     implementation("com.google.android.gms:play-services-location:21.3.0")
+    //implementation("com.google.android.gms:play-services-maps:18.2.0")
+
+
+
+
 }
